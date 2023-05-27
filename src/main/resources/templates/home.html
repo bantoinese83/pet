@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Pet Adoption</title>
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+</head>
+<body>
+<header>
+    <h1 class="emoji">PetConnect</h1>
+
+    <style>
+        .emoji::before {
+            content: "\1F431";  /* Unicode for cat face */
+        }
+
+        .emoji::after {
+            content: "\1F436";  /* Unicode for dog face */
+        }
+    </style>
+</header>
+<main>
+    <section>
+        <h2>Register</h2>
+        <form id="registrationForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Register</button>
+        </form>
+    </section>
+</main>
+<script src="/register.js"></script>
+
+</body>
+</html>
+

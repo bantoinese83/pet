@@ -1,0 +1,101 @@
+/* Reset some basic elements */
+body, h1, h2, p, button {
+    margin: 0;
+    padding: 0;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f7f8fa;
+    color: #333;
+    line-height: 1.6;
+    animation: colorchange 20s infinite;
+}
+
+
+
+header {
+    background-color: #ff8f2b;
+    color: #ffffff;
+    padding: 15px 0;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+h1, h2 {
+    margin-bottom: 10px;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 1.8em;
+}
+
+main {
+    width: 80%;
+    margin: 20px auto;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    border-radius: 15px;
+}
+
+#petsContainer, #availablePetsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+button {
+    display: block;
+    background-color: #ff8f2b;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 15px;
+    font-size: 16px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    transition: all 0.3s ease-out;
+}
+
+button:hover {
+    background-color: #ff651b;
+    transform: scale(1.1);
+}
+
+input[type="text"], input[type="password"] {
+    display: block;
+    width: 50%;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    background-color: #f7f8fa;
+    font-size: 16px;
+}
+
+input[type="text"]::placeholder, input[type="password"]::placeholder {
+    color: #aaa;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    border-color: #ff8f2b;
+    outline: none;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+@keyframes colorchange {
+    0%   {background-color: #f7f8fa;}
+    20%  {background-color: #ffeebb;}
+    40%  {background-color: #fceabb;}
+    60%  {background-color: #fafcba;}
+    80%  {background-color: #ffe2bc;}
+    100% {background-color: #f7f8fa;}
+}

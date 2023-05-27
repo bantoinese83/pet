@@ -1,0 +1,32 @@
+Resources:
+  PetTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: 'Pet'
+      AttributeDefinitions:
+        -
+          AttributeName: 'Id'
+          AttributeType: 'S'
+      KeySchema:
+        -
+          AttributeName: 'Id'
+          KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  UserTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: 'User'
+      AttributeDefinitions:
+        -
+          AttributeName: 'Id'
+          AttributeType: 'S'
+      KeySchema:
+        -
+          AttributeName: 'Id'
+          KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
