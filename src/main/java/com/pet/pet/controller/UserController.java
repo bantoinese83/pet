@@ -1,5 +1,6 @@
 package com.pet.pet.controller;
 
+import com.pet.pet.controller.model.UserCreateRequest;
 import com.pet.pet.model.Interaction;
 import com.pet.pet.model.Pet;
 import com.pet.pet.model.User;
@@ -25,14 +26,14 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<String> registerUser(@RequestBody User user) {
-        if (user.getName() == null || user.getName().trim().isEmpty()) {
+    public ResponseEntity<String> registerUser(@RequestBody UserCreateRequest userCreateRequest) {
+        if (userCreateRequest.getName() == null || userCreateRequest.getName().trim().isEmpty()) {
             return new ResponseEntity<>("Username cannot be empty", HttpStatus.BAD_REQUEST);
         }
 
-        if (user.getId() == null || user.getId().trim().isEmpty()) {
-            return new ResponseEntity<>("Password cannot be empty", HttpStatus.BAD_REQUEST);
-        }
+        User user = new User();
+        user.setName(userCreateRequest.getName());
+
 
         try {
             userService.registerUser(user);
