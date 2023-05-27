@@ -6,6 +6,8 @@ import com.pet.pet.model.User;
 import com.pet.pet.service.PetService;
 import com.pet.pet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,11 +25,24 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public String registerUser(@RequestBody User user) {
-        // Here you need to add a method from UserService that handles user registration
-        userService.registerUser(user);
-        return "User registered successfully";
+    public ResponseEntity<String> registerUser(@RequestBody User user) {
+        if (user.getName() == null || user.getName().trim().isEmpty()) {
+            return new ResponseEntity<>("Username cannot be empty", HttpStatus.BAD_REQUEST);
+        }
+
+        if (user.getId() == null || user.getId().trim().isEmpty()) {
+            return new ResponseEntity<>("Password cannot be empty", HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            userService.registerUser(user);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error occurred while registering the user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
     }
+
 
     @PostMapping("/pets")
     public String adoptPet(@RequestBody Pet pet) {
@@ -47,5 +62,22 @@ public class UserController {
         // Here you need to add a method from PetService that handles pet interactions
         petService.interactWithPet(petId, interaction);
         return "Pet interaction successful";
+    }
+    @PutMapping("/pets/{petId}/play")
+    public String playWithPet(@PathVariable String petId) {
+        petService.playWithPet(petId);
+        return "Played with pet successfully";
+    }
+
+    @PutMapping("/pets/{petId}/feed")
+    public String feedPet(@PathVariable String petId) {
+        petService.feedPet(petId);
+        return "Fed pet successfully";
+    }
+
+    @PutMapping("/pets/{petId}/groom")
+    public String groomPet(@PathVariable String petId) {
+        petService.groomPet(petId);
+        return "Groomed pet successfully";
     }
 }

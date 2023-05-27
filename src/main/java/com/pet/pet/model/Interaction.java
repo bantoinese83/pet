@@ -1,12 +1,13 @@
 package com.pet.pet.model;
 
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 import java.time.Instant;
 
-@DynamoDbBean
+@DynamoDBTable(tableName = "Interactions")
 public class Interaction {
 
     private String id;
@@ -14,32 +15,38 @@ public class Interaction {
     private String type;
     private Instant timestamp;
 
-    @DynamoDbPartitionKey
+    @DynamoDBHashKey
     public String getId() {
         return id;
     }
+
     public void setId(String id) {
         this.id = id;
     }
 
+    @DynamoDBAttribute
     public String getPetId() {
         return petId;
     }
+
     public void setPetId(String petId) {
         this.petId = petId;
     }
 
+    @DynamoDBAttribute
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
 
-    @DynamoDbSortKey
+    @DynamoDBRangeKey
     public Instant getTimestamp() {
         return timestamp;
     }
+
     public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }

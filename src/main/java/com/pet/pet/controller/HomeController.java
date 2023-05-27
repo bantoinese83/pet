@@ -6,8 +6,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class HomeController {
 
-    @RequestMapping("/")
+    @RequestMapping("/home")
     public String home() {
         return "home";
+    }
+
+    @RequestMapping("/adoption")
+    public String adoption() {
+        return "adoption";
+    }
+
+    @RequestMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard";
+    }
+
+    @RequestMapping("/adoptionForm")
+    public String adoptionForm() {
+        return "adoptionForm";
+    }
+
+    @RequestMapping("/interaction")
+    public String dashboardForm() {
+        return "interaction";
     }
 }

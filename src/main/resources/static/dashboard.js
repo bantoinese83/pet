@@ -5,7 +5,6 @@ async function getUserPets(userId) {
         setTimeout(() => {
             resolve([
                 { name: 'Fluffy', type: 'Cat', age: 2, emoji: '🐱' },
-                { name: 'Fido', type: 'Dog', age: 3, emoji: '🐶' },
                 // the user's pets go here
             ]);
         }, 1000);

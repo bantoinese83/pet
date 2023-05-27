@@ -30,3 +30,26 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
+
+
+  InteractionsTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: 'Interactions'
+      AttributeDefinitions:
+        -
+          AttributeName: 'id'
+          AttributeType: 'S'
+        -
+          AttributeName: 'timestamp'
+          AttributeType: 'S'
+      KeySchema:
+        -
+          AttributeName: 'id'
+          KeyType: 'HASH'
+        -
+          AttributeName: 'timestamp'
+          KeyType: 'RANGE'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5

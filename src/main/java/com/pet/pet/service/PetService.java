@@ -20,7 +20,6 @@ public class PetService {
     }
 
     public void adoptPet(Pet pet) {
-        // Business logic to validate pet data can be added here
         petRepository.save(pet);
     }
 
@@ -36,14 +35,11 @@ public class PetService {
         Optional<Pet> optionalPet = petRepository.findById(petId);
         if(optionalPet.isPresent()) {
             Pet pet = optionalPet.get();
-            // apply the interaction to the pet
             petRepository.save(pet);
         } else {
             throw new PetNotFoundException("Pet with id: " + petId + " not found");
         }
     }
-
-    // Additional methods for pet management can be added here
 
     public void deletePet(String petId) {
         petRepository.deleteById(petId);
@@ -53,5 +49,36 @@ public class PetService {
         petRepository.deleteAll();
     }
 
+    public void playWithPet(String petId) {
+        Optional<Pet> optionalPet = petRepository.findById(petId);
+        if (optionalPet.isPresent()) {
+            Pet pet = optionalPet.get();
+            int happiness = pet.getHappiness();
+            happiness += 20;
+            if (happiness > 100) happiness = 100;
+            pet.setHappiness(happiness);
+            petRepository.save(pet);
+        }
+    }
 
+    public void feedPet(String petId) {
+        Optional<Pet> optionalPet = petRepository.findById(petId);
+        if (optionalPet.isPresent()) {
+            Pet pet = optionalPet.get();
+            int hunger = pet.getHunger();
+            hunger -= 20;
+            if (hunger < 0) hunger = 0;
+            pet.setHunger(hunger);
+            petRepository.save(pet);
+        }
+    }
+
+    public void groomPet(String petId) {
+        Optional<Pet> optionalPet = petRepository.findById(petId);
+        if (optionalPet.isPresent()) {
+            Pet pet = optionalPet.get();
+            pet.setCleanliness(100);
+            petRepository.save(pet);
+        }
+    }
 }
