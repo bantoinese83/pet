@@ -5,11 +5,11 @@ Resources:
       TableName: 'Pet'
       AttributeDefinitions:
         -
-          AttributeName: 'Id'
+          AttributeName: 'id'  # change 'Id' to 'id'
           AttributeType: 'S'
       KeySchema:
         -
-          AttributeName: 'Id'
+          AttributeName: 'id'  # change 'Id' to 'id'
           KeyType: 'HASH'
       ProvisionedThroughput:
         ReadCapacityUnits: 5
@@ -21,16 +21,15 @@ Resources:
       TableName: 'User'
       AttributeDefinitions:
         -
-          AttributeName: 'Id'
+          AttributeName: 'id'  # change 'Id' to 'id'
           AttributeType: 'S'
       KeySchema:
         -
-          AttributeName: 'Id'
+          AttributeName: 'id'  # change 'Id' to 'id'
           KeyType: 'HASH'
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
-
 
   InteractionsTable:
     Type: 'AWS::DynamoDB::Table'

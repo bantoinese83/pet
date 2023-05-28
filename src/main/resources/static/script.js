@@ -7,6 +7,7 @@ const pets = [
 window.onload = () => {
     const container = document.getElementById('availablePetsContainer');
 
+
     pets.forEach(pet => {
         const petElement = document.createElement('div');
         petElement.className = 'monster-container'; // create a container for each pet

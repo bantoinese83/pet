@@ -8,25 +8,31 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 @DynamoDBTable(tableName = "Pet")
 public class Pet {
 
-    private final String id;
+    private String id;
     private String name;
     private String ownerId;
     private String type;
     private int hunger;
     private int happiness;
     private int cleanliness;
+    private int health;
 
     public Pet() {
         this.id = UUID.randomUUID().toString();
         // other initialization code...
+        this.health = 100; // initial health
     }
 
-    @DynamoDBHashKey(attributeName = "Id")
+    @DynamoDBHashKey(attributeName = "id")
     public String getId() {
         return id;
     }
 
-    @DynamoDBAttribute(attributeName = "Name")
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @DynamoDBAttribute(attributeName = "name")
     public void setName(String name) {
         this.name = name;
     }
@@ -34,7 +40,7 @@ public class Pet {
         return name;
     }
 
-    @DynamoDBAttribute(attributeName = "OwnerId")
+    @DynamoDBAttribute(attributeName = "ownerId")
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
     }
@@ -42,7 +48,7 @@ public class Pet {
         return ownerId;
     }
 
-    @DynamoDBAttribute(attributeName = "Type")
+    @DynamoDBAttribute(attributeName = "type")
     public void setType(String type) {
         this.type = type;
     }
@@ -53,24 +59,41 @@ public class Pet {
     @DynamoDBAttribute(attributeName = "Hunger")
     public void setHunger(int hunger) {
         this.hunger = hunger;
+        calculateHealth();
     }
     public int getHunger() {
         return hunger;
     }
 
-    @DynamoDBAttribute(attributeName = "Happiness")
+    @DynamoDBAttribute(attributeName = "happiness")
     public void setHappiness(int happiness) {
         this.happiness = happiness;
+        calculateHealth();
     }
     public int getHappiness() {
         return happiness;
     }
 
-    @DynamoDBAttribute(attributeName = "Cleanliness")
+    @DynamoDBAttribute(attributeName = "cleanliness")
     public void setCleanliness(int cleanliness) {
         this.cleanliness = cleanliness;
+        calculateHealth();
     }
     public int getCleanliness() {
         return cleanliness;
+    }
+
+    @DynamoDBAttribute(attributeName = "health")
+    public int getHealth() {
+        return health;
+    }
+
+    private void calculateHealth() {
+        // Adjust these calculations as needed for your game logic
+        this.health = (100 - hunger) / 3 + happiness / 3 + cleanliness / 3;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
     }
 }

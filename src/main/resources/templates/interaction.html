@@ -6,15 +6,28 @@
 </head>
 <body>
 <header>
-    <h1>Pet Care App</h1>
+    <h1>Pet Care </h1>
     <!-- You can add more content to the header here, such as navigation links, a logo, etc. -->
 </header>
 
 <h2>Your Pet</h2>
+<div id="petData" data-pet-id="1234">
+    <!-- Your pet's data goes here -->
+</div>
+
 
 <div id="petsContainer">
+    <div class="health-bar-outer">
+        <div id="healthBar" class="health-bar-inner">
+        </div>
+    </div>
+
     <div id="pet-status">
-        <!-- Display pet's current status here -->
+        <!-- Pet's current status will be displayed here after an interaction -->
+    </div>
+
+    <div id="pet-response">
+        <!-- Pet's response will be displayed here after an interaction -->
     </div>
 
     <div id="actions">
@@ -25,8 +38,13 @@
     </div>
 </div>
 
+
 <script src="/interaction.js"></script>
 <script src="/pets.js"></script>
 <script src="/dashboard.js"></script>
+<script src="/interaction.js"></script>
+<script src="/health.js"></script>
+
+
 </body>
 </html>

@@ -9,7 +9,6 @@ import java.util.UUID;
 @DynamoDBTable(tableName = "User")
 public class User {
 
-
     private String id;
 
     private String name;
@@ -21,7 +20,7 @@ public class User {
 
     }
 
-    @DynamoDBHashKey(attributeName = "Id")
+    @DynamoDBHashKey(attributeName = "id")
     public String getId() {
         return id;
     }
@@ -30,7 +29,7 @@ public class User {
         this.id = id;
     }
 
-    @DynamoDBAttribute(attributeName = "Name")
+    @DynamoDBAttribute(attributeName = "name")
     public String getName() {
         return name;
     }

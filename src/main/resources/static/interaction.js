@@ -1,39 +1,39 @@
 document.addEventListener("DOMContentLoaded", function() {
+    const petId = localStorage.getItem('petId');
+
     document.getElementById("feed").addEventListener("click", function() {
-        fetch("/feed", {
-            method: "POST",
-            // ...add any other necessary options here
+        fetch("/pets/" + petId + "/feed", {
+            method: "PUT",
         })
             .then(response => response.json())
             .then(data => {
-                // Update the pet's status on the page using the response data
                 document.getElementById("pet-status").innerText = data.status;
+                // Show the pet's response
+                document.getElementById("pet-response").innerText = JSON.stringify(data.petResponse);
             });
     });
 
     document.getElementById("play").addEventListener("click", function() {
-        fetch("/play", {
-            method: "POST",
-            // ...add any other necessary options here
+        fetch("/pets/" + petId + "/play", {
+            method: "PUT",
         })
             .then(response => response.json())
             .then(data => {
-                // Update the pet's status on the page using the response data
                 document.getElementById("pet-status").innerText = data.status;
+                // Show the pet's response
+                document.getElementById("pet-response").innerText = JSON.stringify(data.petResponse);
             });
     });
 
     document.getElementById("groom").addEventListener("click", function() {
-        fetch("/groom", {
-            method: "POST",
-            // ...add any other necessary options here
+        fetch("/pets/" + petId + "/groom", {
+            method: "PUT",
         })
             .then(response => response.json())
             .then(data => {
-                // Update the pet's status on the page using the response data
                 document.getElementById("pet-status").innerText = data.status;
+                // Show the pet's response
+                document.getElementById("pet-response").innerText = JSON.stringify(data.petResponse);
             });
     });
-
-    // Add event listeners for any other actions here
 });

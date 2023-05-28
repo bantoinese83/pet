@@ -34,51 +34,85 @@ public class UserController {
         User user = new User();
         user.setName(userCreateRequest.getName());
 
-
         try {
             userService.registerUser(user);
+            return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Error occurred while registering the user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
     }
 
-
     @PostMapping("/pets")
-    public String adoptPet(@RequestBody Pet pet) {
-        // Here you need to add a method from PetService that handles pet adoption
-        petService.adoptPet(pet);
-        return "Pet adopted successfully";
+    public ResponseEntity<String> adoptPet(@RequestBody Pet pet) {
+        try {
+            petService.adoptPet(pet);
+            return new ResponseEntity<>("Pet adopted successfully", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error occurred while adopting the pet: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/pets")
-    public List<Pet> listPets(@RequestParam String userId) {
-        // Here you need to add a method from PetService that returns a list of pets for a specific user
-        return petService.listPets(userId);
+    public ResponseEntity<List<Pet>> listPets(@RequestParam String userId) {
+        try {
+            List<Pet> pets = petService.listPets(userId);
+            return new ResponseEntity<>(pets, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/pets/{petId}")
-    public String interactWithPet(@PathVariable String petId, @RequestBody Interaction interaction) {
-        // Here you need to add a method from PetService that handles pet interactions
-        petService.interactWithPet(petId, interaction);
-        return "Pet interaction successful";
+    public ResponseEntity<String> interactWithPet(@PathVariable String petId, @RequestBody Interaction interaction) {
+        try {
+            petService.interactWithPet(petId, interaction);
+            return new ResponseEntity<>("Pet interaction successful", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error occurred while interacting with the pet: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
     @PutMapping("/pets/{petId}/play")
-    public String playWithPet(@PathVariable String petId) {
-        petService.playWithPet(petId);
-        return "Played with pet successfully";
+    public ResponseEntity<String> playWithPet(@PathVariable String petId) {
+        try {
+            petService.playWithPet(petId);
+            return new ResponseEntity<>("Played with pet successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error occurred while playing with the pet: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/pets/{petId}/feed")
-    public String feedPet(@PathVariable String petId) {
-        petService.feedPet(petId);
-        return "Fed pet successfully";
+    public ResponseEntity<String> feedPet(@PathVariable String petId) {
+        try {
+            petService.feedPet(petId);
+            return new ResponseEntity<>("Fed pet successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error occurred while feeding the pet: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/pets/{petId}/groom")
-    public String groomPet(@PathVariable String petId) {
-        petService.groomPet(petId);
-        return "Groomed pet successfully";
+    public ResponseEntity<String> groomPet(@PathVariable String petId) {
+        try {
+            petService.groomPet(petId);
+            return new ResponseEntity<>("Groomed pet successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error occurred while grooming the pet: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/pets/{petId}/health")
+    public ResponseEntity<Integer> getPetHealth(@PathVariable String petId) {
+        try {
+            Integer petHealth = petService.getPetHealth(petId);
+            if(petHealth != null) {
+                return new ResponseEntity<>(petHealth, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

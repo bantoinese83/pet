@@ -4,7 +4,7 @@ async function getUserPets(userId) {
     return new Promise((resolve) => {
         setTimeout(() => {
             resolve([
-                { name: 'Fluffy', type: 'Cat', age: 2, emoji: '🐱' },
+                { name: 'KoobCam', type: 'Monster', age: 5 },
                 // the user's pets go here
             ]);
         }, 1000);
@@ -18,24 +18,28 @@ window.onload = async () => {
 
     pets.forEach(pet => {
         const petElement = document.createElement('div');
-        petElement.className = 'pet';
+        petElement.className = 'monster-container';
+
+        const monsterElement = document.createElement('div');
+        monsterElement.className = 'monster';
+        petElement.appendChild(monsterElement);
+
+        const detailsElement = document.createElement('div');
+        detailsElement.className = 'details';
 
         const petName = document.createElement('h3');
         petName.innerText = pet.name;
-        petElement.appendChild(petName);
+        detailsElement.appendChild(petName);
 
         const petType = document.createElement('p');
         petType.innerText = `Type: ${pet.type}`;
-        petElement.appendChild(petType);
+        detailsElement.appendChild(petType);
 
         const petAge = document.createElement('p');
         petAge.innerText = `Age: ${pet.age}`;
-        petElement.appendChild(petAge);
+        detailsElement.appendChild(petAge);
 
-        const petEmoji = document.createElement('p');
-        petEmoji.innerText = pet.emoji;
-        petEmoji.className = 'petEmoji';
-        petElement.appendChild(petEmoji);
+        petElement.appendChild(detailsElement);
 
         container.appendChild(petElement);
     });

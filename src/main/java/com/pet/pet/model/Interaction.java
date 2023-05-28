@@ -13,6 +13,7 @@ public class Interaction {
     private String id;
     private String petId;
     private String type;
+    private String petResponse;  // New field
     private Instant timestamp;
 
     @DynamoDBHashKey
@@ -40,6 +41,15 @@ public class Interaction {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @DynamoDBAttribute  // Attribute annotation for the new field
+    public String getPetResponse() {
+        return petResponse;
+    }
+
+    public void setPetResponse(String petResponse) {
+        this.petResponse = petResponse;
     }
 
     @DynamoDBRangeKey
