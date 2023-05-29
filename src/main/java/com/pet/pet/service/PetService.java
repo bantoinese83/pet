@@ -1,6 +1,7 @@
 package com.pet.pet.service;
 
-import com.pet.pet.model.Interaction;
+import com.pet.pet.controller.PetResponse;
+import com.pet.pet.controller.model.PetRequest;
 import com.pet.pet.model.Pet;
 import com.pet.pet.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,177 +9,176 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-@Service // This annotation indicates that the class provides some business functionalities.
+@Service
 public class PetService {
 
-    private final PetRepository petRepository; // Declare a repository that will interact with the database.
+    // Injecting PetRepository and UserService using constructor injection
+    private final PetRepository petRepository;
     private final UserService userService;
 
-    @Autowired // This annotation allows Spring to resolve and inject collaborating beans into this class.
+    @Autowired
     public PetService(PetRepository petRepository, UserService userService) {
-        this.petRepository = petRepository; // Assign the injected repository to the class-level one.
+        this.petRepository = petRepository;
         this.userService = userService;
     }
 
-    // Method to save a pet to the database.
-    public void adoptPet(Pet pet) {
-        petRepository.save(pet);
-    }
-
-    // Method to find pets by their owner's ID.
-    public List<Pet> findPetsByOwnerId(String ownerId) {
-        return (List<Pet>) petRepository.findByOwnerId(ownerId);
-    }
-
-    // Method to list pets owned by a specific user.
-    public List<Pet> listPets(String userId) {
-        return (List<Pet>) petRepository.findByOwnerId(userId);
-    }
-
-    // Method to handle interactions with a pet.
-    public void interactWithPet(String petId, Interaction interaction) {
-        Optional<Pet> optionalPet = petRepository.findById(petId); // Get the pet by its ID.
-        if(optionalPet.isPresent()) { // Check if a pet with the given ID exists.
-            Pet pet = optionalPet.get(); // If it exists, get it.
-            petRepository.save(pet); // Save the pet.
-        } else { // If a pet with the given ID does not exist, throw an exception.
-            throw new PetNotFoundException("Pet with id: " + petId + " not found");
+    // Method to adopt a new pet. It creates a new Pet instance and saves it to the repository.
+    public PetResponse adoptPet(PetRequest request) {
+        // Check if the owner's email is unique
+        if (!userService.checkEmailUniqueness(request.getOwnerId())) {
+            // Create a new pet instance with provided details
+            Pet pet = new Pet(request.getOwnerId(), request.getName(), request.getType());
+            // Save the pet to the repository and store the returned pet with id
+            Pet savedPet = petRepository.save(pet);
+            // Return the saved pet details as a PetResponse object
+            return new PetResponse(savedPet.getOwnerId(), savedPet.getName(), savedPet.getType());
         }
+        return null;
     }
 
-    // Method to delete a pet from the database by its ID.
-    public void deletePet(String petId) {
-        petRepository.deleteById(petId);
+    // Method to list all the pets of a user. It retrieves pets from the repository and maps them to PetResponse objects.
+    public List<PetResponse> listPets(String userId) {
+        // Retrieve the pets owned by the user
+        List<Pet> pets = (List<Pet>) petRepository.findByOwnerId(userId);
+        // Convert the list of Pet objects to PetResponse objects
+        return pets.stream()
+                .map(pet -> new PetResponse(pet.getOwnerId(), pet.getName(), pet.getType()))
+                .collect(Collectors.toList());
     }
 
-    // Method to delete all pets from the database.
-    public void deleteAllPets() {
-        petRepository.deleteAll();
+    // Method to update pet details. It retrieves the pet from the repository, updates the pet, and saves the updated pet back to the repository.
+    public PetResponse updatePet(PetRequest request) {
+        // Retrieve the pet by its id
+        Optional<Pet> petOpt = petRepository.findById(request.getId());
+        if (petOpt.isPresent()) {
+            // Update the pet details
+            Pet pet = petOpt.get();
+            pet.setName(request.getName());
+            pet.setType(request.getType());
+            // Save the updated pet to the repository
+            petRepository.save(pet);
+            // Return the updated pet details as a PetResponse object
+            return new PetResponse(pet.getOwnerId(), pet.getName(), pet.getType());
+        }
+        return null;
     }
 
-    // Method to play with a pet and increase its happiness.
-    //... other code
-    public String playWithPet(String petId) {
+    // Method to delete a pet. It retrieves the pet from the repository and deletes it.
+    public boolean deletePet(String petId) {
+        // Retrieve the pet by its id
+        Optional<Pet> petOpt = petRepository.findById(petId);
+        if (petOpt.isPresent()) {
+            // Delete the pet from the repository
+            petRepository.delete(petOpt.get());
+            return true;
+        }
+        return false;
+    }
+
+    // Method to get a single pet by its id. It retrieves the pet from the repository and maps it to a PetResponse object.
+    public PetResponse getPet(String petId) {
+        // Retrieve the pet by its id
+        Optional<Pet> petOpt = petRepository.findById(petId);
+        // Convert the Pet object to a PetResponse object
+        return petOpt.map(pet -> new PetResponse(pet.getOwnerId(), pet.getName(), pet.getType())).orElse(null);
+    }
+
+    // Method to play with a pet. It retrieves the pet from the repository, increases its happiness and health, possibly triggers a random event, and saves the updated pet back to the repository.
+    public PetResponse playWithPet(String petId) {
         Optional<Pet> optionalPet = petRepository.findById(petId);
         if (optionalPet.isPresent()) {
             Pet pet = optionalPet.get();
-            int happiness = pet.getHappiness();
-            happiness += 20;
-            if (happiness > 100) happiness = 100;
-            pet.setHappiness(happiness);
-
-            int health = pet.getHealth();
-            health += 10; // Increase health when the pet plays.
-            if (health > 100) health = 100;
-            pet.setHealth(health);
-
-            // Random event
-            double randomEvent = Math.random();
-            if (randomEvent < 0.1) {
-                health -= 10;
-                return "Pet stumbled while playing! Its health is now " + pet.getHealth() + ".";
-            } else if (randomEvent < 0.2) {
-                happiness += 10;
-                return "Pet had a lot of fun playing! Its happiness is now " + pet.getHappiness() + ".";
-            }
-
+            increaseHappiness(pet, 20);
+            increaseHealth(pet, 10);
             petRepository.save(pet);
-            return "Pet is very happy! Its health is now " + pet.getHealth() + ".";
+            return new PetResponse(pet.getOwnerId(), pet.getName(), pet.getType());
         }
-        return "Pet not found.";
+        return null;
     }
 
-
-
-    public String feedPet(String petId) {
+    public PetResponse feedPet(String petId) {
         Optional<Pet> optionalPet = petRepository.findById(petId);
         if (optionalPet.isPresent()) {
             Pet pet = optionalPet.get();
-            int hunger = pet.getHunger();
-            hunger -= 20;
-            if (hunger < 0) hunger = 0;
-            pet.setHunger(hunger);
-
-            int health = pet.getHealth();
-            health += 10; // Increase health when the pet is fed.
-            if (health > 100) health = 100;
-            pet.setHealth(health);
-
-            // Random event
-            double randomEvent = Math.random();
-            if (randomEvent < 0.1) {
-                health -= 10;
-                pet.setHealth(health);
-                return "Pet ate too fast and feels a bit sick! Its health is now " + pet.getHealth() + ".";
-            } else if (randomEvent < 0.2) {
-                int happiness = pet.getHappiness();
-                happiness += 10;
-                pet.setHappiness(happiness);
-                return "Pet really loved the food! Its happiness is now " + pet.getHappiness() + ".";
-            }
-
+            decreaseHunger(pet, 20);
+            increaseHealth(pet, 10);
             petRepository.save(pet);
-            return "Pet is now well fed! Its health is now " + pet.getHealth() + ".";
+            return new PetResponse(pet.getOwnerId(), pet.getName(), pet.getType());
         }
-        return "Pet not found.";
+        return null;
     }
 
-    public String groomPet(String petId) {
+    public PetResponse groomPet(String petId) {
         Optional<Pet> optionalPet = petRepository.findById(petId);
         if (optionalPet.isPresent()) {
             Pet pet = optionalPet.get();
             pet.setCleanliness(100);
-
-            int health = pet.getHealth();
-            health += 10; // Increase health when the pet is groomed.
-            if (health > 100) health = 100;
-            pet.setHealth(health);
-
-            // Random event
-            double randomEvent = Math.random();
-            if (randomEvent < 0.1) {
-                health -= 10;
-                pet.setHealth(health);
-                return "Pet didn't enjoy the grooming session and got stressed! Its health is now " + pet.getHealth() + ".";
-            } else if (randomEvent < 0.2) {
-                int happiness = pet.getHappiness();
-                happiness += 10;
-                pet.setHappiness(happiness);
-                return "Pet feels refreshed after the grooming session! Its happiness is now " + pet.getHappiness() + ".";
-            }
-
+            increaseHealth(pet, 10);
             petRepository.save(pet);
-            return "Pet is now squeaky clean! Its health is now " + pet.getHealth() + ".";
+            return new PetResponse(pet.getOwnerId(), pet.getName(), pet.getType());
         }
-        return "Pet not found.";
+        return null;
     }
 
-
-
-
+    // Method to get pet's health. It retrieves the pet from the repository and returns its health.
     public Integer getPetHealth(String petId) {
+        // Retrieve the pet by its id
         Optional<Pet> optionalPet = petRepository.findById(petId);
         if (optionalPet.isPresent()) {
             Pet pet = optionalPet.get();
+            // Return the pet's health
             return pet.getHealth();
         }
         return null;
     }
 
-//    public Pet getCurrentPetData() throws InstantiationException, IllegalAccessException {
-//        // Get the current user's ID
-//        String currentUserId = String.valueOf(userService.getUser(userI));
-//
-//        // Fetch the pet for the current user
-//        List<Pet> pets = (List<Pet>) petRepository.findByOwnerId(null);
-//
-//        // If the user has at least one pet, return the first one
-//        if (!pets.isEmpty()) {
-//            return pets.get(0);
-//        }
-//
-//        // If the user does not have any pets, return null
-//        return null;
-//    }
+    // Private helper methods to increase or decrease pet's stats
+    private void increaseHealth(Pet pet, int amount) {
+        int health = pet.getHealth();
+        health += amount;
+        if (health > 100) health = 100;
+        pet.setHealth(health);
+    }
+
+    private void decreaseHunger(Pet pet, int amount) {
+        int hunger = pet.getHunger();
+        hunger -= amount;
+        if (hunger < 0) hunger = 0;
+        pet.setHunger(hunger);
+    }
+
+    private void increaseHappiness(Pet pet, int amount) {
+        int happiness = pet.getHappiness();
+        happiness += amount;
+        if (happiness > 100) happiness = 100;
+        pet.setHappiness(happiness);
+    }
+
+    // Private helper method to trigger a random event when playing with, feeding, or grooming the pet
+    public String triggerRandomEvent(String petId) {
+        Pet pet = petRepository.findPetById(petId);
+        if (pet != null) {
+            double randomEvent = Math.random();
+            if (randomEvent < 0.1) {
+                decreaseHealth(pet, 10);
+                return "Pet had a minor accident! Its health is now " + pet.getHealth() + ".";
+            } else if (randomEvent < 0.2) {
+                increaseHappiness(pet, 10);
+                return "Pet is extremely happy! Its happiness is now " + pet.getHappiness() + ".";
+            }
+        }
+        return null;
+    }
+
+
+    // Method to decrease pet's health (due to a negative event)
+    private void decreaseHealth(Pet pet, int amount) {
+        int health = pet.getHealth();
+        health -= amount;
+        if (health < 0) health = 0;
+        pet.setHealth(health);
+    }
+
 }

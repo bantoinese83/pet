@@ -1,46 +1,55 @@
-// pets.js
-async function fetchPetData() {
-    const petId = 'PET_ID_HERE'; // replace with actual pet id
-    const response = await fetch(`/pets/${petId}`);
-    if (response.ok) {
-        const petData = await response.json();
-        petData.happiness =  Math.round(Math.random() * 100);
-        petData.hunger =  Math.round(Math.random() * 100);
-        petData.health = Math.round(Math.random() * 100);
-        document.getElementById('pet-status').innerHTML = `
-            <p>Name: ${petData.name}</p>
-            <p>Type: ${petData.type}</p>
-        `;
-        updateStatusBar('healthBar', petData.health);
-        updateStatusBar('happinessBar', petData.happiness);
-        updateStatusBar('hungerBar', petData.hunger);
-    }
+function adoptPet(petId) {
+    let petRequest = {
+        petId: petId,
+        userId: this.userId
+    };
+
+    fetch(`http://127.0.0.1:8080/pets`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(petRequest),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Pet adopted:', data);
+            // Store adopted pet in local storage
+            let adoptedPets = JSON.parse(localStorage.getItem('adoptedPets')) || [];
+            adoptedPets.push(data);
+            localStorage.setItem('adoptedPets', JSON.stringify(adoptedPets));
+            // Redirect to the dashboard page
+            window.location.href = 'http://localhost:8080/dashboard';
+        })
+        .catch((error) => console.error('Error:', error));
 }
 
-// dashboard.js
-function updateStatusBar(id, percentage) {
-    const statusBar = document.getElementById(id);
-    statusBar.style.width = `${percentage}%`;
+function listPets() {
+    // Retrieve pets from local storage
+    let pets = JSON.parse(localStorage.getItem('adoptedPets')) || [];
+    console.log('Pets:', pets);
+    displayPets(pets);
 }
 
-// interaction.js
-const interactionButtons = document.querySelectorAll('#actions button');
-interactionButtons.forEach(button => {
-    button.addEventListener('click', function(event) {
-        interactWithPet(event.target.id);
-    });
-});
 
-async function interactWithPet(interactionType) {
-    const petId = document.getElementById('petData').dataset.petId;
-    const response = await fetch(`/pets/${petId}/${interactionType}`, { method: 'PUT' });
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+function displayPets(pets) {
+    const container = document.getElementById("petsContainer");
+    if (container) { // Check if the container exists
+        container.innerHTML = "";
+        pets.forEach(pet => {
+            const petElement = document.createElement("div");
+            petElement.textContent = `Pet name: ${pet.name}, Pet type: ${pet.type}`;
+            const adoptButton = document.createElement("button");
+            adoptButton.textContent = "Adopt";
+            adoptButton.addEventListener("click", () => adoptPet(pet.id));
+            petElement.appendChild(adoptButton);
+            container.appendChild(petElement);
+        });
     } else {
-        const petData = await response.json();
-        updateStatusBar(`${interactionType}Bar`, petData[interactionType]);
+        console.error('Could not find the container with id "petsContainer"');
     }
 }
 
-// on page load
-document.addEventListener('DOMContentLoaded', fetchPetData);
+window.addEventListener('load', (event) => {
+    listPets();
+});

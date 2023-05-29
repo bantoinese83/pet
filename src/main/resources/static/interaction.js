@@ -1,39 +1,29 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const petId = localStorage.getItem('petId');
+// Play with a pet
+function playWithPet(petId) {
+    fetch(`http://127.0.0.1:8080/pets/${petId}/play`, {
+        method: 'POST',
+    })
+        .then(response => response.json())
+        .then(data => console.log('Pet played:', data))
+        .catch((error) => console.error('Error:', error));
+}
 
-    document.getElementById("feed").addEventListener("click", function() {
-        fetch("/pets/" + petId + "/feed", {
-            method: "PUT",
-        })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("pet-status").innerText = data.status;
-                // Show the pet's response
-                document.getElementById("pet-response").innerText = JSON.stringify(data.petResponse);
-            });
-    });
+// Feed a pet
+function feedPet(petId) {
+    fetch(`http://127.0.0.1:8080/pets/${petId}/feed`, {
+        method: 'POST',
+    })
+        .then(response => response.json())
+        .then(data => console.log('Pet fed:', data))
+        .catch((error) => console.error('Error:', error));
+}
 
-    document.getElementById("play").addEventListener("click", function() {
-        fetch("/pets/" + petId + "/play", {
-            method: "PUT",
-        })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("pet-status").innerText = data.status;
-                // Show the pet's response
-                document.getElementById("pet-response").innerText = JSON.stringify(data.petResponse);
-            });
-    });
-
-    document.getElementById("groom").addEventListener("click", function() {
-        fetch("/pets/" + petId + "/groom", {
-            method: "PUT",
-        })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("pet-status").innerText = data.status;
-                // Show the pet's response
-                document.getElementById("pet-response").innerText = JSON.stringify(data.petResponse);
-            });
-    });
-});
+// Groom a pet
+function groomPet(petId) {
+    fetch(`http://127.0.0.1:8080/pets/${petId}/groom`, {
+        method: 'POST',
+    })
+        .then(response => response.json())
+        .then(data => console.log('Pet groomed:', data))
+        .catch((error) => console.error('Error:', error));
+}

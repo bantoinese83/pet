@@ -21,7 +21,8 @@ dependencyManagement {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'software.amazon.awssdk:dynamodb-enhanced'
-	testImplementation('org.springframework.boot:spring-boot-starter-test')
+    implementation 'org.projectlombok:lombok:1.18.26'
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
 	implementation 'com.github.derjust:spring-data-dynamodb:5.1.0'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 

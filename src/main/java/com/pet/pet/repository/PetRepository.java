@@ -7,4 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 @EnableScan
 public interface PetRepository extends CrudRepository<Pet, String> {
     Iterable<Pet> findByOwnerId(String ownerId);
+
+    Pet findPetById(String petId);
+
 }
