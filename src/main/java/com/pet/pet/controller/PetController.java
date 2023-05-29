@@ -19,11 +19,26 @@ public class PetController {
     }
 
     @PostMapping("/pets")
-    public ResponseEntity<PetResponse> adoptPet(@RequestBody PetRequest petRequest) {
-        PetResponse response = petService.adoptPet(petRequest);
-        return response != null ? ResponseEntity.status(HttpStatus.CREATED).body(response)
-                : ResponseEntity.badRequest().build();
+    public ResponseEntity<?> adoptPet(@RequestBody PetRequest petRequest) {
+        try {
+            PetResponse response = petService.adoptPet(petRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
+
+    @PostMapping("/pets/{petId}/adopt")
+    public ResponseEntity<?> adoptPet(@PathVariable String petId, @RequestParam String userId) {
+        try {
+            // Implement the adoptPet method in your PetService
+            PetResponse response = petService.adoptPet(userId, petId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
     @GetMapping("/pets")
     public ResponseEntity<List<PetResponse>> listPets(@RequestParam String userId) {

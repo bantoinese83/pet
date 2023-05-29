@@ -26,17 +26,19 @@ public class PetService {
 
     // Method to adopt a new pet. It creates a new Pet instance and saves it to the repository.
     public PetResponse adoptPet(PetRequest request) {
-        // Check if the owner's email is unique
-        if (!userService.checkEmailUniqueness(request.getOwnerId())) {
+        // Check if the owner's email exists
+        if (userService.userExists(request.getOwnerId())) {
             // Create a new pet instance with provided details
             Pet pet = new Pet(request.getOwnerId(), request.getName(), request.getType());
             // Save the pet to the repository and store the returned pet with id
             Pet savedPet = petRepository.save(pet);
             // Return the saved pet details as a PetResponse object
             return new PetResponse(savedPet.getOwnerId(), savedPet.getName(), savedPet.getType());
+        } else {
+            throw new IllegalArgumentException("User with provided email doesn't exist.");
         }
-        return null;
     }
+
 
     // Method to list all the pets of a user. It retrieves pets from the repository and maps them to PetResponse objects.
     public List<PetResponse> listPets(String userId) {
@@ -181,4 +183,20 @@ public class PetService {
         pet.setHealth(health);
     }
 
+    public PetResponse adoptPet(String userId, String petId) {
+        // Check if the owner's email exists
+        if (userService.userExists(userId)) {
+            // Retrieve the pet by its id
+            Optional<Pet> petOpt = petRepository.findById(petId);
+            if (petOpt.isPresent()) {
+                // Create a new pet instance with provided details
+                Pet pet = new Pet(userId, petOpt.get().getName(), petOpt.get().getType());
+                // Save the pet to the repository and store the returned pet with id
+                Pet savedPet = petRepository.save(pet);
+                // Return the saved pet details as a PetResponse object
+                return new PetResponse(savedPet.getOwnerId(), savedPet.getName(), savedPet.getType());
+            }
+        }
+        return null;
+    }
 }

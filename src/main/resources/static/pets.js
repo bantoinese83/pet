@@ -1,55 +1,88 @@
-function adoptPet(petId) {
-    let petRequest = {
-        petId: petId,
-        userId: this.userId
-    };
+const pets = [
+    { id: 1, name: 'KoobCam', type: 'Monster', age: 5 },
+];
 
-    fetch(`http://127.0.0.1:8080/pets`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(petRequest),
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Pet adopted:', data);
-            // Store adopted pet in local storage
-            let adoptedPets = JSON.parse(localStorage.getItem('adoptedPets')) || [];
-            adoptedPets.push(data);
-            localStorage.setItem('adoptedPets', JSON.stringify(adoptedPets));
-            // Redirect to the dashboard page
-            window.location.href = 'http://localhost:8080/dashboard';
-        })
-        .catch((error) => console.error('Error:', error));
+
+async function getUserPets(userId) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(pets);
+        }, 1000);
+    });
 }
 
-function listPets() {
-    // Retrieve pets from local storage
-    let pets = JSON.parse(localStorage.getItem('adoptedPets')) || [];
-    console.log('Pets:', pets);
-    displayPets(pets);
-}
+function displayPets(pets, containerId, shouldAddAdoptButton = false) {
+    const container = document.getElementById(containerId);
 
-
-function displayPets(pets) {
-    const container = document.getElementById("petsContainer");
-    if (container) { // Check if the container exists
+    if (container) {
+        // Clear out the existing content in the container
         container.innerHTML = "";
-        pets.forEach(pet => {
-            const petElement = document.createElement("div");
-            petElement.textContent = `Pet name: ${pet.name}, Pet type: ${pet.type}`;
-            const adoptButton = document.createElement("button");
-            adoptButton.textContent = "Adopt";
-            adoptButton.addEventListener("click", () => adoptPet(pet.id));
-            petElement.appendChild(adoptButton);
+
+        pets.forEach((pet, index) => {
+            pet.id = index; // add an id property to each pet
+
+            const petElement = document.createElement('div');
+            petElement.className = 'monster-container';
+
+            const monsterElement = document.createElement('div');
+            monsterElement.className = 'monster';
+            petElement.appendChild(monsterElement);
+
+            const detailsElement = document.createElement('div');
+            detailsElement.className = 'details';
+
+            const petName = document.createElement('h3');
+            petName.innerText = pet.name;
+            detailsElement.appendChild(petName);
+
+            const petType = document.createElement('p');
+            petType.innerText = `Type: ${pet.type}`;
+            detailsElement.appendChild(petType);
+
+            const petAge = document.createElement('p');
+            petAge.innerText = `Age: ${pet.age}`;
+            detailsElement.appendChild(petAge);
+
+            if (shouldAddAdoptButton) {
+                const adoptButton = document.createElement('button');
+                adoptButton.innerText = 'Adopt';
+                adoptButton.addEventListener('click', async () => {
+                    await adoptPet(pet.id);
+                    window.location.href = 'http://localhost:8080/dashboard';
+                });
+                detailsElement.appendChild(adoptButton);
+            }
+
+            petElement.appendChild(detailsElement);
             container.appendChild(petElement);
         });
     } else {
-        console.error('Could not find the container with id "petsContainer"');
+        console.error(`No element found with id ${containerId}`);
     }
 }
 
-window.addEventListener('load', (event) => {
-    listPets();
-});
+
+async function adoptPet(petId) {
+    const userId = localStorage.getItem('userId');
+
+    try {
+        const data = { id: petId, name: 'KoobCam', type: 'Monster', age: 5 }; // mock response data
+        console.log('Pet adopted:', data);
+        let ownedPets = JSON.parse(localStorage.getItem('ownedPets')) || [];
+        ownedPets.push(data);
+        localStorage.setItem('ownedPets', JSON.stringify(ownedPets));
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+
+function listUserPets() {
+    const userId = localStorage.getItem('userId');
+    // Retrieve adopted pets for this user from local storage
+    const ownedPets = JSON.parse(localStorage.getItem('ownedPets')) || [];
+    // Display owned pets on dashboard
+    displayPets(ownedPets, 'petsContainer');
+}
+
+document.addEventListener('DOMContentLoaded', listUserPets);

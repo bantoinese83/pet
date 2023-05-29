@@ -83,4 +83,9 @@ public class UserService {
             return false;
         }
     }
+
+    public boolean userExists(String ownerId) {
+        return userRepository.existsById(ownerId);
+
+    }
 }
