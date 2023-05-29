@@ -149,3 +149,26 @@ margin-top: 20px;   // Add some space between the monster and the details
     background-color: #4caf50;
     width: 0; /* initially health is 0 */
 }
+
+.status-bar-outer {
+    width: 100%;
+    height: 20px;
+    border: 1px solid #000;
+    margin: 10px 0;
+}
+
+.status-bar-inner {
+    height: 100%;
+    background-color: #0f0; /* green color */
+    width: 0%; /* This will be updated in JavaScript */
+    text-align: center;
+    line-height: 20px; /* vertically center the text */
+    color: white;
+}
+
+#actions button {
+    margin: 5px;
+}
+
+
+

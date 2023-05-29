@@ -1,8 +1,9 @@
-package com.pet.pet.controller.model;
+package com.pet.pet.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class UserCreateRequest {
+public class UserLoginRequest {
+
     @JsonProperty("email")
 
     private String email;
@@ -11,9 +12,9 @@ public class UserCreateRequest {
 
     private String password;
 
-    public UserCreateRequest() {}
+    public UserLoginRequest() {}
 
-    public UserCreateRequest( String email, String password) {
+    public UserLoginRequest(String email, String password) {
         this.email = email;
         this.password = password;
     }
@@ -34,4 +35,3 @@ public class UserCreateRequest {
         this.password = password;
     }
 }
-

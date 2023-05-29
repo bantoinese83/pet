@@ -1,118 +1,79 @@
 package com.pet.pet.controller;
 
+
 import com.pet.pet.controller.model.UserCreateRequest;
-import com.pet.pet.model.Interaction;
-import com.pet.pet.model.Pet;
 import com.pet.pet.model.User;
-import com.pet.pet.service.PetService;
 import com.pet.pet.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
+@RequestMapping("/User")
 public class UserController {
 
     private final UserService userService;
-    private final PetService petService;
 
-    @Autowired
-    public UserController(UserService userService, PetService petService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.petService = petService;
+    }
+    @CrossOrigin(origins = "http://localhost:8080")
+    @PostMapping("/register")
+    public ResponseEntity<Void> createUser(@RequestBody @Valid UserCreateRequest request) {
+        boolean success = userService.createUser(request.getEmail(), request.getPassword());
+        return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+    @CrossOrigin(origins = "http://localhost:8080")
+    @PostMapping("/login")
+    public ResponseEntity<User> loginUser(@RequestBody @Valid UserLoginRequest request) {
+        User user = userService.login(request.getEmail(), request.getPassword());
+        return user != null ? ResponseEntity.ok(user) : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    @PostMapping("/users")
-    public ResponseEntity<String> registerUser(@RequestBody UserCreateRequest userCreateRequest) {
-        if (userCreateRequest.getName() == null || userCreateRequest.getName().trim().isEmpty()) {
-            return new ResponseEntity<>("Username cannot be empty", HttpStatus.BAD_REQUEST);
-        }
-
-        User user = new User();
-        user.setName(userCreateRequest.getName());
-
-        try {
-            userService.registerUser(user);
-            return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error occurred while registering the user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @DeleteMapping("/deleteUserByEmail")
+    public ResponseEntity<Void> deleteByEmail(@RequestParam String email) {
+        boolean success = userService.deleteUserByEmail(email);
+        return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
-    @PostMapping("/pets")
-    public ResponseEntity<String> adoptPet(@RequestBody Pet pet) {
-        try {
-            petService.adoptPet(pet);
-            return new ResponseEntity<>("Pet adopted successfully", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error occurred while adopting the pet: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @PutMapping("/updateUser")
+    public ResponseEntity<Void> forgotPassword(@RequestParam String email, @RequestParam String password) {
+        boolean success = userService.updateUserByEmail(email, password);
+        return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
-    @GetMapping("/pets")
-    public ResponseEntity<List<Pet>> listPets(@RequestParam String userId) {
-        try {
-            List<Pet> pets = petService.listPets(userId);
-            return new ResponseEntity<>(pets, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @GetMapping("/users/{email}")
+    public ResponseEntity<User> getUser(@PathVariable String email) {
+        Optional<UserRecord> user = userService.getUser(email);
+        return user.map(userRecord -> ResponseEntity.ok(new User(userRecord.getEmail(), userRecord.getPassword()))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/pets/{petId}")
-    public ResponseEntity<String> interactWithPet(@PathVariable String petId, @RequestBody Interaction interaction) {
-        try {
-            petService.interactWithPet(petId, interaction);
-            return new ResponseEntity<>("Pet interaction successful", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error occurred while interacting with the pet: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+    @PostMapping("/check")
+    public ResponseEntity<Boolean> checkEmailUnique(@RequestBody @Valid UserLoginRequest request) {
+        boolean success = userService.checkEmailUniqueness(request.getEmail());
+        return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
-    @PutMapping("/pets/{petId}/play")
-    public ResponseEntity<String> playWithPet(@PathVariable String petId) {
-        try {
-            petService.playWithPet(petId);
-            return new ResponseEntity<>("Played with pet successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error occurred while playing with the pet: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @GetMapping ("/getByEmail")
+    public ResponseEntity<User> getUserByEmail(@RequestParam String email) {
+        Optional<UserRecord> user = userService.getUser(email);
+        return user.map(userRecord -> ResponseEntity.ok(new User(userRecord.getEmail(), userRecord.getPassword()))).orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).build());
     }
 
-    @PutMapping("/pets/{petId}/feed")
-    public ResponseEntity<String> feedPet(@PathVariable String petId) {
-        try {
-            petService.feedPet(petId);
-            return new ResponseEntity<>("Fed pet successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error occurred while feeding the pet: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @GetMapping ("/getAll")
+    public ResponseEntity<Iterable<UserRecord>> getAllUsers() {
+        Iterable<UserRecord> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 
-    @PutMapping("/pets/{petId}/groom")
-    public ResponseEntity<String> groomPet(@PathVariable String petId) {
-        try {
-            petService.groomPet(petId);
-            return new ResponseEntity<>("Groomed pet successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error occurred while grooming the pet: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @GetMapping ("/logout")
+    public ResponseEntity<Void> logoutUser() {
+        return ResponseEntity.ok().build();
+
     }
 
-    @GetMapping("/pets/{petId}/health")
-    public ResponseEntity<Integer> getPetHealth(@PathVariable String petId) {
-        try {
-            Integer petHealth = petService.getPetHealth(petId);
-            if(petHealth != null) {
-                return new ResponseEntity<>(petHealth, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }

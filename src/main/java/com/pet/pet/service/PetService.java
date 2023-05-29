@@ -13,10 +13,12 @@ import java.util.Optional;
 public class PetService {
 
     private final PetRepository petRepository; // Declare a repository that will interact with the database.
+    private final UserService userService;
 
     @Autowired // This annotation allows Spring to resolve and inject collaborating beans into this class.
-    public PetService(PetRepository petRepository) {
+    public PetService(PetRepository petRepository, UserService userService) {
         this.petRepository = petRepository; // Assign the injected repository to the class-level one.
+        this.userService = userService;
     }
 
     // Method to save a pet to the database.
@@ -75,11 +77,9 @@ public class PetService {
             double randomEvent = Math.random();
             if (randomEvent < 0.1) {
                 health -= 10;
-                pet.setHealth(health);
                 return "Pet stumbled while playing! Its health is now " + pet.getHealth() + ".";
             } else if (randomEvent < 0.2) {
                 happiness += 10;
-                pet.setHappiness(happiness);
                 return "Pet had a lot of fun playing! Its happiness is now " + pet.getHappiness() + ".";
             }
 
@@ -88,7 +88,6 @@ public class PetService {
         }
         return "Pet not found.";
     }
-
 
 
 
@@ -166,4 +165,20 @@ public class PetService {
         }
         return null;
     }
+
+//    public Pet getCurrentPetData() throws InstantiationException, IllegalAccessException {
+//        // Get the current user's ID
+//        String currentUserId = String.valueOf(userService.getUser(userI));
+//
+//        // Fetch the pet for the current user
+//        List<Pet> pets = (List<Pet>) petRepository.findByOwnerId(null);
+//
+//        // If the user has at least one pet, return the first one
+//        if (!pets.isEmpty()) {
+//            return pets.get(0);
+//        }
+//
+//        // If the user does not have any pets, return null
+//        return null;
+//    }
 }

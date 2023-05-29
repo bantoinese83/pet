@@ -30,4 +30,9 @@ public class HomeController {
     public String dashboardForm() {
         return "interaction";
     }
+
+    @RequestMapping("/login")
+    public String login() {
+        return "login";
+    }
 }

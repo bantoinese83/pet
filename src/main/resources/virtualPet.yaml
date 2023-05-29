@@ -5,11 +5,11 @@ Resources:
       TableName: 'Pet'
       AttributeDefinitions:
         -
-          AttributeName: 'id'  # change 'Id' to 'id'
+          AttributeName: 'id'
           AttributeType: 'S'
       KeySchema:
         -
-          AttributeName: 'id'  # change 'Id' to 'id'
+          AttributeName: 'id'
           KeyType: 'HASH'
       ProvisionedThroughput:
         ReadCapacityUnits: 5
@@ -20,16 +20,19 @@ Resources:
     Properties:
       TableName: 'User'
       AttributeDefinitions:
-        -
-          AttributeName: 'id'  # change 'Id' to 'id'
+        - AttributeName: 'email'
           AttributeType: 'S'
       KeySchema:
-        -
-          AttributeName: 'id'  # change 'Id' to 'id'
+        - AttributeName: 'email'
           KeyType: 'HASH'
+      GlobalSecondaryIndexes:
+        - IndexName: 'UserByEmail'
+          KeySchema:
+            - AttributeName: 'email'
+              KeyType: 'HASH'
       ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
+        ReadCapacityUnits: '5'
+        WriteCapacityUnits: '5'
 
   InteractionsTable:
     Type: 'AWS::DynamoDB::Table'
@@ -41,7 +44,7 @@ Resources:
           AttributeType: 'S'
         -
           AttributeName: 'timestamp'
-          AttributeType: 'S'
+          AttributeType: 'N'  # change from 'S' to 'N'
       KeySchema:
         -
           AttributeName: 'id'

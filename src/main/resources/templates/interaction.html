@@ -7,44 +7,33 @@
 <body>
 <header>
     <h1>Pet Care </h1>
-    <!-- You can add more content to the header here, such as navigation links, a logo, etc. -->
 </header>
 
 <h2>Your Pet</h2>
-<div id="petData" data-pet-id="1234">
-    <!-- Your pet's data goes here -->
-</div>
-
+<div id="petData" data-pet-id="1234"></div>
 
 <div id="petsContainer">
-    <div class="health-bar-outer">
-        <div id="healthBar" class="health-bar-inner">
-        </div>
+    <div class="status-bar-outer">
+        <div id="healthBar" class="status-bar-inner">Health</div>
+    </div>
+    <div class="status-bar-outer">
+        <div id="hungerBar" class="status-bar-inner">Hunger</div>
+    </div>
+    <div class="status-bar-outer">
+        <div id="happinessBar" class="status-bar-inner">Happiness</div>
     </div>
 
-    <div id="pet-status">
-        <!-- Pet's current status will be displayed here after an interaction -->
-    </div>
-
-    <div id="pet-response">
-        <!-- Pet's response will be displayed here after an interaction -->
-    </div>
+    <div id="pet-status"></div>
 
     <div id="actions">
         <button id="feed">Feed</button>
         <button id="play">Play</button>
         <button id="groom">Groom</button>
-        <!-- Add more actions as necessary -->
     </div>
 </div>
 
-
-<script src="/interaction.js"></script>
 <script src="/pets.js"></script>
 <script src="/dashboard.js"></script>
 <script src="/interaction.js"></script>
-<script src="/health.js"></script>
-
-
 </body>
 </html>
