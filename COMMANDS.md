@@ -32,3 +32,8 @@ AttributeName=id,AttributeType=S \
 --key-schema AttributeName=id,KeyType=HASH \
 --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
 --endpoint-url http://localhost:8000
+
+
+chat gpt api key
+
+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

@@ -34,15 +34,18 @@
     <button id="play">Play</button>
     <button id="groom">Groom</button>
   </div>
+
+  <div id="chat-container">
+    <div id="chat-log"></div>
+    <form id="chat-form">
+      <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Type your message...">
+      <button type="submit">Send</button>
+    </form>
+  </div>
 </main>
 <script src="/pets.js"></script>
 <script src="/interaction.js"></script>
 <script src="/health.js"></script>
-<script>
-  document.getElementById('adoptButton').addEventListener('click', function() {
-    window.location.href = '/adoption';
-  });
-
-</script>
+<script src="/chat.js"></script>
 </body>
 </html>
