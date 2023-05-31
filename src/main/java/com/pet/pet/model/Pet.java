@@ -125,4 +125,7 @@ public class Pet {
     }
 
 
+    public void setOwnerId(String userId) {
+        this.ownerId = userId;
+    }
 }

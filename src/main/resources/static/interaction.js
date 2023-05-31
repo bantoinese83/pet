@@ -1,3 +1,4 @@
+
 // Play with a pet
 function playWithPet(petId) {
     fetch(`http://127.0.0.1:8080/pets/${petId}/play`, {

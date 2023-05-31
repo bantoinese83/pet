@@ -1,7 +1,10 @@
-const pets = [
-    { id: 1, name: 'KoobCam', type: 'Monster', age: 5 },
-];
+function generateRandomId() {
+    return Math.floor(Math.random() * 1000) + 1; // Generate a random number between 1 and 1000
+}
 
+const pets = [
+    { id: generateRandomId(), name: 'KoobCam', type: 'Monster', age: 5 },
+];
 
 async function getUserPets(userId) {
     return new Promise((resolve) => {
@@ -16,11 +19,9 @@ function displayPets(pets, containerId, shouldAddAdoptButton = false) {
 
     if (container) {
         // Clear out the existing content in the container
-        container.innerHTML = "";
+        container.innerHTML = '';
 
-        pets.forEach((pet, index) => {
-            pet.id = index; // add an id property to each pet
-
+        pets.forEach((pet) => {
             const petElement = document.createElement('div');
             petElement.className = 'monster-container';
 
@@ -47,7 +48,7 @@ function displayPets(pets, containerId, shouldAddAdoptButton = false) {
                 const adoptButton = document.createElement('button');
                 adoptButton.innerText = 'Adopt';
                 adoptButton.addEventListener('click', async () => {
-                    await adoptPet(pet.id);
+                    await adoptPet(pet.id, pet.name, pet.type, pet.age);
                     window.location.href = 'http://localhost:8080/dashboard';
                 });
                 detailsElement.appendChild(adoptButton);
@@ -61,12 +62,11 @@ function displayPets(pets, containerId, shouldAddAdoptButton = false) {
     }
 }
 
-
-async function adoptPet(petId) {
+async function adoptPet(petId, name, type, age) {
     const userId = localStorage.getItem('userId');
 
     try {
-        const data = { id: petId, name: 'KoobCam', type: 'Monster', age: 5 }; // mock response data
+        const data = { id: petId, name, type, age, health: 100, hunger: 100, happiness: 100 };
         console.log('Pet adopted:', data);
         let ownedPets = JSON.parse(localStorage.getItem('ownedPets')) || [];
         ownedPets.push(data);

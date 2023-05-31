@@ -1,38 +1,32 @@
 package com.pet.pet.controller;
 
 import com.pet.pet.controller.model.PetRequest;
+import com.pet.pet.model.Pet;
+import com.pet.pet.repository.PetRepository;
 import com.pet.pet.service.PetService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:8080") // Adjust the origin as needed
 public class PetController {
 
     private final PetService petService;
+    private final PetRepository petRepository;
 
-    public PetController(PetService petService) {
+    public PetController(PetService petService, PetRepository petRepository  ) {
         this.petService = petService;
+        this.petRepository = petRepository;
     }
 
-    @PostMapping("/pets")
-    public ResponseEntity<?> adoptPet(@RequestBody PetRequest petRequest) {
-        try {
-            PetResponse response = petService.adoptPet(petRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
 
     @PostMapping("/pets/{petId}/adopt")
     public ResponseEntity<?> adoptPet(@PathVariable String petId, @RequestParam String userId) {
         try {
-            // Implement the adoptPet method in your PetService
-            PetResponse response = petService.adoptPet(userId, petId);
+            PetResponse response = petService.adoptPet(petId, userId);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -55,8 +49,9 @@ public class PetController {
 
     @DeleteMapping("/pets/{petId}")
     public ResponseEntity<Void> deletePet(@PathVariable String petId) {
-        petService.deletePet(petId);
-        return ResponseEntity.ok().build();
+        boolean deleted = petService.deletePet(petId);
+        return deleted ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/pets/{petId}")
@@ -67,32 +62,32 @@ public class PetController {
     }
 
     @PostMapping("/pets/{petId}/play")
-    public ResponseEntity<PetResponse> playWithPet(@PathVariable String petId) {
-        PetResponse response = petService.playWithPet(petId);
+    public ResponseEntity<PetStatusResponse> playPet(@PathVariable String petId) {
+        PetStatusResponse response = petService.playWithPet(petId);
         return response != null ? ResponseEntity.ok(response)
                 : ResponseEntity.notFound().build();
     }
 
     @PostMapping("/pets/{petId}/feed")
-    public ResponseEntity<PetResponse> feedPet(@PathVariable String petId) {
-        PetResponse response = petService.feedPet(petId);
+    public ResponseEntity<PetStatusResponse> feedPet(@PathVariable String petId) {
+        PetStatusResponse response = petService.feedPet(petId);
         return response != null ? ResponseEntity.ok(response)
                 : ResponseEntity.notFound().build();
     }
 
     @PostMapping("/pets/{petId}/groom")
-    public ResponseEntity<PetResponse> groomPet(@PathVariable String petId) {
-        PetResponse response = petService.groomPet(petId);
+    public ResponseEntity<PetStatusResponse> groomPet(@PathVariable String petId) {
+        PetStatusResponse response = petService.groomPet(petId);
         return response != null ? ResponseEntity.ok(response)
                 : ResponseEntity.notFound().build();
     }
+
     @GetMapping("/pets/{petId}/randomEvent")
     public ResponseEntity<String> triggerRandomEventForPet(@PathVariable String petId) {
-        String eventResult = petService.triggerRandomEvent(petId);
+        String eventResult = petService.triggerRandomEventForPet(petId);
         return eventResult != null ? ResponseEntity.ok(eventResult)
                 : ResponseEntity.notFound().build();
     }
-
 
     @GetMapping("/pets/{petId}/health")
     public ResponseEntity<Integer> getPetHealth(@PathVariable String petId) {
@@ -101,4 +96,15 @@ public class PetController {
                 : ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/pets/{petId}/status")
+    public ResponseEntity<PetStatusResponse> getPetStatus(@PathVariable String petId) {
+        Optional<Pet> optionalPet = petRepository.findById(petId);
+        if (optionalPet.isPresent()) {
+            Pet pet = optionalPet.get();
+            PetStatusResponse response = petService.createPetStatusResponse(pet);
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

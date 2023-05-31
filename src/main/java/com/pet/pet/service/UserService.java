@@ -6,6 +6,10 @@ import com.pet.pet.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -13,79 +17,98 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-
     public boolean createUser(String email, String password) {
         System.out.println("Creating user with email: " + email);
-        Optional<UserRecord> record = userRepository.findById(email);
-        System.out.println("User exists: " + record.isPresent());
-        if (record.isPresent()) {
-            return false;
-        } else {
-            UserRecord userRecord = new UserRecord(email, password);
-            userRepository.save(userRecord);
-            return true;
+        Optional<UserRecord> existingUser = userRepository.findById(email);
+        if (existingUser.isPresent()) {
+            return false; // User with the given email already exists
         }
+
+        UserRecord userRecord = new UserRecord(email, hash(password));
+        userRepository.save(userRecord);
+        return true;
     }
 
     public User login(String email, String password) {
-        Optional<UserRecord> record = userRepository.findById(email);
-        if (record.isPresent()) {
-            UserRecord userRecord = record.get();
-            if (userRecord.getPassword().equals(password)) {
-                return new User(email, password);
-            } else {
-                return null;
+        Optional<UserRecord> userRecordOptional = userRepository.findById(email);
+        if (userRecordOptional.isPresent()) {
+            UserRecord userRecord = userRecordOptional.get();
+            if (userRecord.getPassword().equals(hash(password))) {
+                return new User(userRecord.getEmail(), userRecord.getPassword());
             }
-        } else {
-            return null;
         }
+        return null;
     }
 
-
     public Optional<UserRecord> getUser(String email) {
-        return userRepository.findById(email);
+        return userRepository.findById(Objects.requireNonNull(hash(email)));
     }
 
     public boolean checkEmailUniqueness(String email) {
-        Optional<UserRecord> userRecord = userRepository.findById(email);
-        return !userRecord.isPresent();
+        return !userRepository.existsById(Objects.requireNonNull(hash(email)));
     }
-
 
     public Iterable<UserRecord> getAllUsers() {
         return userRepository.findAll();
     }
 
     public boolean deleteUserByEmail(String email) {
-        Optional<UserRecord> record = userRepository.findById(email);
-        if (record.isPresent()) {
-            userRepository.delete(record.get());
+        if (userRepository.existsById(Objects.requireNonNull(hash(email)))) {
+            userRepository.deleteById(Objects.requireNonNull(hash(email)));
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public boolean updateUserByEmail(String email, String password) {
-        Optional<UserRecord> record = userRepository.findById(email);
+        Optional<UserRecord> record = userRepository.findById(Objects.requireNonNull(hash(email)));
         if (record.isPresent()) {
             UserRecord userRecord = record.get();
             userRecord.setPassword(password);
             userRepository.save(userRecord);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public boolean userExists(String ownerId) {
         return userRepository.existsById(ownerId);
+    }
 
+    // Helper method to hash the email or password
+    private String hash(String value) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] encodedHash = digest.digest(value.getBytes(StandardCharsets.UTF_8));
+
+            // Convert the byte array to a hexadecimal string representation
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : encodedHash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean validateCredentials(String email, String password) {
+        Optional<UserRecord> record = userRepository.findById(Objects.requireNonNull(hash(email)));
+        if (record.isPresent()) {
+            UserRecord userRecord = record.get();
+            return userRecord.getPassword().equals(password);
+        }
+        return false;
     }
 }
