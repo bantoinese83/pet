@@ -60,9 +60,9 @@ let happiness = 100;
 
 // Update the status bar every second
 setInterval(() => {
-    if (health > 0) health -= 0.50;
-    if (hunger > 0) hunger -= 0.50;
-    if (happiness > 0) happiness -= 0.50;
+    if (health > 0) health -= 0.1;
+    if (hunger > 0) hunger -= 0.1;
+    if (happiness > 0) happiness -= 0.1;
 
     updateStatusBar('statusBar', (health + hunger + happiness) / 3);
 

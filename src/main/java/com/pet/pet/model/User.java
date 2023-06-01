@@ -42,6 +42,8 @@ public class User {
     public UserRecord toUserRecord() {
         return new UserRecord(email, password);
     }
+
+
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -56,5 +58,11 @@ public class User {
         return Objects.equals(this.password, other.password);
     }
 
-
+    @Override
+    public String toString() {
+        return "User{" +
+                "password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }

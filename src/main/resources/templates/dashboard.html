@@ -3,10 +3,13 @@
 <head>
   <title>User Dashboard & Pet Care</title>
   <link rel="stylesheet" type="text/css" href="/styles.css">
+  <link rel="stylesheet" type="text/css" href="/chat.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
 <header>
-  <h1>Welcome to Your Virtual Pet Dashboard & Pet Care!</h1>
+  <h1>Welcome to your Pet Dashboard !</h1>
 </header>
 <main>
   <section>
@@ -14,7 +17,7 @@
     <div id="petsContainer">
       <!-- Virtual pets will be dynamically added here -->
     </div>
-    <button id="adoptButton">Adopt More Pets</button>
+    <button id="adoptButton"><i class="fas fa-plus-circle"></i> Adopt More Pets</button>
   </section>
 
   <h2>Pet Status</h2>
@@ -26,26 +29,34 @@
     </div>
   </div>
 
-
   <div id="pet-status"></div>
 
   <div id="actions">
-    <button id="feed">Feed</button>
-    <button id="play">Play</button>
-    <button id="groom">Groom</button>
+    <button id="feed"><i class="material-icons">local_dining</i> Feed</button>
+    <button id="play"><i class="material-icons">sports_soccer</i> Play</button>
+    <button id="groom"><i class="material-icons">spa</i> Groom</button>
   </div>
 
-  <div id="chat-container">
-    <div id="chat-log"></div>
-    <form id="chat-form">
-      <label for="chat-input"></label><input type="text" id="chat-input" placeholder="Type your message...">
-      <button type="submit">Send</button>
-    </form>
-  </div>
+  <h2 class="chat-heading">Chat with your pet</h2>
+  <div id="chat-log" class="chat-log"></div>
+  <form class="chat-form" action="/chat" method="post">
+    <fieldset>
+      <div class="form-group">
+        <label>
+          <input class="chat-input" type="text" name="prompt" value="" required autofocus/>
+        </label>
+      </div>
+      <div class="row">
+        <button class="chat-submit" type="submit">Send</button>
+      </div>
+    </fieldset>
+  </form>
+  <h2 class="response-heading" th:if="${response != null}">Pet responded with:</h2>
+  <p class="response-message" th:if="${response != null}" th:text="${response}"></p>
+
 </main>
 <script src="/pets.js"></script>
 <script src="/interaction.js"></script>
 <script src="/health.js"></script>
-<script src="/chat.js"></script>
 </body>
 </html>

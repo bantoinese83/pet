@@ -10,6 +10,12 @@ sourceCompatibility = '16'
 
 repositories {
 	mavenCentral()
+	maven {
+		url 'https://maven.openai.com'
+	}
+	maven {
+		url 'https://jitpack.io'
+	}
 }
 
 dependencyManagement {
@@ -21,11 +27,12 @@ dependencyManagement {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'software.amazon.awssdk:dynamodb-enhanced'
-    implementation 'org.projectlombok:lombok:1.18.26'
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
+	implementation 'org.projectlombok:lombok:1.18.26'
+    implementation 'redis.clients:jedis:4.4.0-m2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'com.github.derjust:spring-data-dynamodb:5.1.0'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-
+	implementation 'com.theokanning.openai-gpt3-java:api:0.12.0'
 
 }
 

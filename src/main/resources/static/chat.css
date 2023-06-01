@@ -1,0 +1,71 @@
+/* CSS Styles for the Pet Chat */
+.pet-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.pet-avatar {
+    width: 60px;
+    height: 60px;
+    background-color: #4caf50;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.pet-chat {
+    flex: 1;
+}
+
+.pet-chat .chat-log {
+    height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+}
+
+.pet-chat .chat-form {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pet-chat .chat-input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    background-color: #fff;
+    font-size: 16px;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pet-chat .chat-submit {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pet-chat .chat-submit:hover {
+    background-color: #45a049;
+}
+
+.pet-chat .response-heading {
+    margin-top: 10px;
+    color: #333;
+}
+
+.pet-chat .response-message {
+    color: #555;
+    font-size: 1.2em;
+}

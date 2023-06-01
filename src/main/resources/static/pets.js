@@ -77,6 +77,8 @@ async function adoptPet(petId, name, type, age) {
 }
 
 
+
+
 function listUserPets() {
     const userId = localStorage.getItem('userId');
     // Retrieve adopted pets for this user from local storage

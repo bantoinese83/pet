@@ -36,4 +36,4 @@ AttributeName=id,AttributeType=S \
 
 chat gpt api key
 
-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
+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
